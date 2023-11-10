@@ -31,14 +31,13 @@ router.post('/', (req, res) => {
 
 router.delete('/:id', (req, res) => {
     console.log("Information from user: ", req.body)
-    var id = req.params.id;
+    var deleteId = req.params.id;
     fs.readFile('./db/db.json', 'utf8', (error, data) => {
         console.log("Information from database: ", JSON.parse(data))
         var oldNotes = JSON.parse(data);
-        var deleteId = oldNotes.filter((item,index)=>index!=id);
-        console.log(deleteId);
-        console.log("Information from deleted database: ", deleteId)
-        fs.writeFile('./db/db.json', JSON.stringify(deleteId), (error) => {
+        var updatedNotesArr = oldNotes.filter(({ id })=> deleteId !== id);
+
+        fs.writeFile('./db/db.json', JSON.stringify(updatedNotesArr), (error) => {
             error ? console.error(error) : res.json({message: "Note Deleted!"})
         });
     });
