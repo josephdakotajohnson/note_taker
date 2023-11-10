@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const fs = require('fs');
 const path = require('path');
+const { v4: uuid } = require('uuid');
 
 // router.get post delete?
 router.get('/', (req, res) => {
@@ -16,7 +17,10 @@ router.post('/', (req, res) => {
     fs.readFile('./db/db.json', 'utf8', (error, data) => {
         console.log("Information from database: ", JSON.parse(data))
         var oldNotes = JSON.parse(data);
-        oldNotes.push(req.body);
+        oldNotes.push({
+            ...req.body,
+            id: uuid()
+        });
         console.log("New notes combined with old ones: ", oldNotes);
 
         fs.writeFile('./db/db.json', JSON.stringify(oldNotes), (error) => {
@@ -24,6 +28,7 @@ router.post('/', (req, res) => {
         });
     });
 });
+
 router.delete('/:id', (req, res) => {
     console.log("Information from user: ", req.body)
     var id = req.params.id;
